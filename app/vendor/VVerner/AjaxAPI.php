@@ -8,7 +8,7 @@ defined('ABSPATH') || exit('No direct script access allowed');
 
 class AjaxAPI
 {
-   private const PREFIX = 'vv_api-';
+   private const PREFIX = 'vv_api';
 
    private static $instances = [];
 
@@ -102,7 +102,7 @@ class AjaxAPI
 
    private function getRoute(string $route): string
    {
-      return self::PREFIX . sanitize_title($route);
+      return self::PREFIX . '/' . $route;
    }
 
    private function sendError($data): void

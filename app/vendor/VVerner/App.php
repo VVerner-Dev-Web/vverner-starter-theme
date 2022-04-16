@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace VVerner;
 
@@ -6,61 +6,75 @@ use Exception;
 
 defined('ABSPATH') || exit('No direct script access allowed');
 
-class App 
+class App
 {
-   private static $instances = [];
+    private static $instances = [];
 
-   public const VERSION = '2.0.0';
-   public const PREFIX  = 'vv-';
+    public const VERSION = '2.0.0';
+    public const PREFIX  = 'vv-';
 
-   protected function __construct() 
-   { 
-      $this->assets     = Assets::getInstance();
-      $this->views      = Views::getInstance();
-      $this->shortcodes = Shortcodes::getInstance();
+    protected function __construct()
+    {
+        add_action('init', function () {
+            global $vverner_app;
+            $vverner_app = $this;
+        });
+    }
 
-      add_action('init', function(){
-         global $vverner_app;
-         $vverner_app = $this;
-      });
-   }
+    protected function __clone()
+    {
+    }
 
-   protected function __clone() 
-   {
-   }
+    public function __wakeup()
+    {
+        throw new Exception("Cannot unserialize a singleton.");
+    }
 
-   public function __wakeup()
-   {
-      throw new Exception("Cannot unserialize a singleton.");
-   }
+    public static function loadDependencies(string $path): void
+    {
+        if (is_dir($path)) :
+            $ignoredFiles = ['index.php', '..', '.'];
+            $dependencies = array_diff(scandir($path), $ignoredFiles);
 
-   public static function getInstance(): self
-   {
-      $cls = static::class;
-      if (!isset(self::$instances[$cls])) :
-         self::$instances[$cls] = new static();
-      endif;
+            foreach ($dependencies as $dependency) :
+                $dPath = $path . '/' . $dependency;
+                self::loadDependencies($dPath);
+            endforeach;
 
-      return self::$instances[$cls];
-   }
+        elseif (is_file($path)) :
+            if (strpos($path, '.php') !== false) : 
+                require_once $path;
+            endif;
+        endif;
+    }
 
-   public function isVVernerUser(): bool
-   {
-      $data = get_userdata(get_current_user_id());
-      return strpos($data->user_email, 'vverner') !== false;
-   }
+    public static function getInstance(): self
+    {
+        $cls = static::class;
+        if (!isset(self::$instances[$cls])) :
+            self::$instances[$cls] = new static();
+        endif;
 
-   public function log($thing, bool $print = false): void
-   {
-      error_log('=== VV_LOG ===');
-      error_log(print_r($thing, true));
+        return self::$instances[$cls];
+    }
 
-      if ($print && $this->isVVernerUser()) : 
-         add_action('the_content', function() use ($thing){
-            echo '<pre>';
-            var_dump($thing);
-            echo '<pre>';
-         });
-      endif;
-   }
+    public function isVVernerUser(): bool
+    {
+        $data = get_userdata(get_current_user_id());
+        return strpos($data->user_email, 'vverner') !== false;
+    }
+
+    public function log($thing, bool $print = false): void
+    {
+        error_log('=== VV_LOG ===');
+        error_log(print_r($thing, true));
+
+        if ($print && $this->isVVernerUser()) :
+            add_action('the_content', function () use ($thing) {
+                echo '<pre>';
+                var_dump($thing);
+                echo '<pre>';
+            });
+        endif;
+    }
 }
