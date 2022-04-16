@@ -10,7 +10,7 @@ class App
 {
     private static $instances = [];
 
-    public const VERSION = '2.0.0';
+    public const VERSION = '2.1.0';
     public const PREFIX  = 'vv-';
 
     protected function __construct()

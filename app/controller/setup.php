@@ -11,14 +11,24 @@ add_filter( 'the_generator', '__return_false' );
 add_filter( 'xmlrpc_enabled', '__return_false' );
 
 /**
- * Altera o REST-API header de "null" para "*".
- */
-add_action( 'rest_api_init', function(){
-	header( 'Access-Control-Allow-Origin: *' );
-});
-
-/**
  * Remove os emojis padrões do wp
  */
 remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
+
+/**
+ * Jumpstart
+ */
+add_action('vverner/jumpstart', function(){
+    if (get_option('vverner_theme-jumpstart')) : 
+        return;
+    endif;
+    
+    update_option('vverner_theme-jumpstart', 1, false);
+
+    do_action('vverner/jumpstart/posts');
+    do_action('vverner/jumpstart/pages');
+    do_action('vverner/jumpstart/comments');
+    do_action('vverner/jumpstart/plugins');
+    do_action('vverner/jumpstart/configs');
+});
