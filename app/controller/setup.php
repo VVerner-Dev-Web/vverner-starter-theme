@@ -17,6 +17,14 @@ remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
 
 /**
+ * Trigger para iniciar o jumpstart. Descomentar hook abaixo para executar.
+ */
+// add_action('init', function(){
+//     do_action('vverner/jumpstart');
+// });
+
+
+/**
  * Jumpstart
  */
 add_action('vverner/jumpstart', function(){
