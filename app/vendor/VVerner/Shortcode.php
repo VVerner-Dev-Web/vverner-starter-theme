@@ -48,7 +48,7 @@ class Shortcode
         ]);
     }
 
-    public function addOption(string $heading, string $key, $defaultValue = '', array $options = []): void
+    public function addAttribute(string $heading, string $key, $defaultValue = '', array $options = []): void
     {
         $this->atts[ $key ] = $defaultValue;
         $this->options[ $key ] = [
