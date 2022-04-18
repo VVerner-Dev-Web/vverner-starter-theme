@@ -13,7 +13,7 @@ class Shortcode
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->addDefaultOptions();
+        $this->addDefaultAttributes();
         add_action('init', [$this, 'addShortcode']);
         add_action('ux_builder_setup', [$this, 'uxBuilderSetup']);
     }
@@ -22,10 +22,6 @@ class Shortcode
     {
         add_shortcode(App::PREFIX . $this->name, function ($args) {
             ob_start();
-
-            echo '<pre>';
-            var_dump($args);
-            echo '</pre>';
 
             $args = shortcode_atts($args, $this->atts);
             $args = apply_filters('vv_shortcode-' . $this->name, $args);
@@ -60,9 +56,9 @@ class Shortcode
         ];
     }
 
-    private function addDefaultOptions(): void
+    private function addDefaultAttributes(): void
     {
-        $this->addOption('Classe extra de CSS', 'class', '');
+        $this->addAttribute('Classe extra de CSS', 'class', '');
     }
 
     private function getView(string $sc, array $args = []): void
