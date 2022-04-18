@@ -17,3 +17,6 @@
 *Shortcodes*
 - Os shortocodes estão integrados nativamente com o UX Builder do Flatsome
 - A classe de shortcodes foi removida e substituida pela classe Shortopde
+
+*Jumpstart*
+- Foi criado a action para execução autmática do jumpstart
