@@ -23,7 +23,7 @@ class Shortcode
         add_shortcode(App::PREFIX . $this->name, function ($args) {
             ob_start();
 
-            $args = shortcode_atts($args, $this->atts);
+            $args = shortcode_atts($this->atts, $args);
             $args = apply_filters('vv_shortcode-' . $this->name, $args);
             $this->getView($this->name, $args);
 
