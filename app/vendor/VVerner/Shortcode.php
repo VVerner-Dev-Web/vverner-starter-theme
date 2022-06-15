@@ -7,11 +7,13 @@ defined('ABSPATH') || exit('No direct script access allowed');
 class Shortcode
 {
     private $name;
+    private $nameUxBuilder;
     private $atts = [];
     private $options = [];
 
     public function __construct(string $name)
     {
+
         $this->name = $name;
         $this->addDefaultAttributes();
         add_action('init', [$this, 'addShortcode']);
@@ -37,11 +39,20 @@ class Shortcode
             require_once get_template_directory() . '/inc/builder/helpers.php';
         endif;
 
-        add_ux_builder_shortcode(App::PREFIX . $this->name, [
-            'name'              => $this->name,
-            'category'          => 'VVerner',
-            'options'           => $this->options,
-        ]);
+        if ($this->nameUxBuilder) :
+            add_ux_builder_shortcode(App::PREFIX . $this->name, [
+                'name'              => $this->nameUxBuilder,
+                'category'          => 'VVerner',
+                'options'           => $this->options
+            ]);
+        else:
+            add_ux_builder_shortcode(App::PREFIX . $this->name, [
+                'name'              => $this->name,
+                'category'          => 'VVerner',
+                'options'           => $this->options,
+            ]);
+        endif;
+        
     }
 
     public function addAttribute(string $heading, string $key, $defaultValue = '', array $options = []): void
@@ -65,5 +76,10 @@ class Shortcode
     {
         Views::getInstance()->createForShortcode($sc);
         Views::getInstance()->getForShortcode($sc, $args);
+    }
+
+    public function setNameUxBuilder(string $nameUxBuilder): void
+    {
+        $this->nameUxBuilder = $nameUxBuilder; 
     }
 }
