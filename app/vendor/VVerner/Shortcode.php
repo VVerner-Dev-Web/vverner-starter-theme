@@ -7,7 +7,7 @@ defined('ABSPATH') || exit('No direct script access allowed');
 class Shortcode
 {
     private $name;
-    private $nameUxBuilder;
+    private $UxBuilderName;
     private $atts = [];
     private $options = [];
 
@@ -39,19 +39,12 @@ class Shortcode
             require_once get_template_directory() . '/inc/builder/helpers.php';
         endif;
 
-        if ($this->nameUxBuilder) :
             add_ux_builder_shortcode(App::PREFIX . $this->name, [
-                'name'              => $this->nameUxBuilder,
+                'name'              => $UxBuilderName ? $this->UxBuilderName : $this->name,
                 'category'          => 'VVerner',
                 'options'           => $this->options
             ]);
-        else:
-            add_ux_builder_shortcode(App::PREFIX . $this->name, [
-                'name'              => $this->name,
-                'category'          => 'VVerner',
-                'options'           => $this->options,
-            ]);
-        endif;
+       
         
     }
 
@@ -78,8 +71,8 @@ class Shortcode
         Views::getInstance()->getForShortcode($sc, $args);
     }
 
-    public function setNameUxBuilder(string $nameUxBuilder): void
+    public function setUxBuilderName(string $UxBuilderName): void
     {
-        $this->nameUxBuilder = $nameUxBuilder; 
+        $this->UxBuilderName = $UxBuilderName; 
     }
 }
