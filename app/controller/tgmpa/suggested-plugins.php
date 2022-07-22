@@ -68,8 +68,6 @@ add_action('tgmpa_register', function(){
         ]
     ];
 
-    error_log(print_r($plugins, true));
-    
     tgmpa($plugins, [
         'id'           => 'vverner',
         'default_path' => '',
