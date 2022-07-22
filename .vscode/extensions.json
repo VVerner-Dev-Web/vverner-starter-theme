@@ -1,0 +1,15 @@
+{
+	"recommendations": [
+		"formulahendry.auto-rename-tag",
+		"mrmlnc.vscode-autoprefixer",
+		"streetsidesoftware.code-spell-checker-portuguese-brazilian",
+		"streetsidesoftware.code-spell-checker",
+		"EditorConfig.EditorConfig",
+		"eamodio.gitlens",
+		"ZainChen.json",
+		"xdebug.php-debug",
+		"bmewburn.vscode-intelephense-client",
+		"MS-CEINTL.vscode-language-pack-pt-BR",
+		"wordpresstoolbox.wordpress-toolbox"
+	]
+}
