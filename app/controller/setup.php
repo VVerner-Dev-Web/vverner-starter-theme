@@ -17,26 +17,10 @@ remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
 
 /**
- * Trigger para iniciar o jumpstart. Descomentar hook abaixo para executar.
+ * Trigger para iniciar o jumpstart
  */
-// add_action('init', function(){
-//     do_action('vverner/jumpstart');
-// });
-
-
-/**
- * Jumpstart
- */
-add_action('vverner/jumpstart', function(){
-    if (get_option('vverner_theme-jumpstart')) : 
-        return;
+add_action('init', function(){
+    if (defined('VV_DO_JUMPSTART') && VV_DO_JUMPSTART) :
+        do_action('vverner/jumpstart');
     endif;
-    
-    update_option('vverner_theme-jumpstart', 1, false);
-
-    do_action('vverner/jumpstart/posts');
-    do_action('vverner/jumpstart/pages');
-    do_action('vverner/jumpstart/comments');
-    do_action('vverner/jumpstart/plugins');
-    do_action('vverner/jumpstart/configs');
 });
