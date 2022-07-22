@@ -10,9 +10,18 @@ class Assets
 {
     protected $baseUrl;
     protected $path;
-    protected $cssFiles     = [];
-    protected $jsFiles      = [];
-    protected $jsFilesData  = [];
+    protected $cssFiles     = [
+        'site'      => [],
+        'wp-admin'  => []
+    ];
+    protected $jsFiles      = [
+        'site'      => [],
+        'wp-admin'  => []
+    ];
+    protected $jsFilesData  = [
+        'site'      => [],
+        'wp-admin'  => []
+    ];
 
     private static $instances = [];
 
@@ -22,6 +31,7 @@ class Assets
         $this->baseUrl = VV_APP_URL . '/assets/';
 
         $this->enqueueAssets();
+        $this->enqueueAdminAssets();
     }
 
     protected function __clone()
@@ -45,7 +55,7 @@ class Assets
 
     public function getImageFileUrl(string $filename): string
     {
-        return $this->getUrl('img', $filename);
+        return $this->baseUrl . 'img/' . $filename;
     }
 
     public function getCssFileUrl(string $filename): string
@@ -61,36 +71,71 @@ class Assets
     public function registerCss(string $file, string $id = null): void
     {
         $id = $id ? $id : $file;
-        $this->cssFiles[$id] = $file;
+        $this->cssFiles['site'][$id] = $file;
     }
 
     public function registerJs(string $file, string $id = null): void
     {
         $id = $id ? $id : $file;
-        $this->jsFiles[$id] = $file;
+        $this->jsFiles['site'][$id] = $file;
     }
 
     public function localizeJs(string $id, array $data): void
     {
-        $this->jsFilesData[$id] = $data;
+        $this->jsFilesData['site'][$id] = $data;
+    }
+
+    public function registerAdminCss(string $file, string $id = null): void
+    {
+        $id = $id ? $id : $file;
+        $this->cssFiles['wp-admin'][$id] = $file;
+    }
+
+    public function registerAdminJs(string $file, string $id = null): void
+    {
+        $id = $id ? $id : $file;
+        $this->jsFiles['wp-admin'][$id] = $file;
+    }
+
+    public function localizeAdminJs(string $id, array $data): void
+    {
+        $this->jsFilesData['wp-admin'][$id] = $data;
     }
 
     private function enqueueAssets(): void
     {
         add_action('wp_enqueue_scripts', function () {
-            foreach ($this->cssFiles as $id => $file) :
+            foreach ($this->cssFiles['site'] as $id => $file) :
                 wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::VERSION);
             endforeach;
 
-            foreach ($this->jsFiles as $id => $file) :
+            foreach ($this->jsFiles['site'] as $id => $file) :
                 wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::VERSION, true);
 
-                if (isset($this->jsFilesData[$id])) :
-                    wp_localize_script(App::PREFIX . $id, $id . '_data', $this->jsFilesData[$id]);
+                if (isset($this->jsFilesData['site'][$id])) :
+                    wp_localize_script(App::PREFIX . $id, $id . '_data', $this->jsFilesData['site'][$id]);
                 endif;
             endforeach;
 
             $this->enqueueDynamicAssets();
+        }, 999);
+    }
+
+    private function enqueueAdminAssets(): void
+    {
+        add_action('admin_enqueue_scripts', function () {
+            foreach ($this->cssFiles['wp-admin'] as $id => $file) :
+                wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::VERSION);
+            endforeach;
+
+            foreach ($this->jsFiles['wp-admin'] as $id => $file) :
+                wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::VERSION, true);
+
+                if (isset($this->jsFilesData['wp-admin'][$id])) :
+                    $var = str_replace('-', '_', sanitize_title($id)) . '_data';
+                    wp_localize_script(App::PREFIX . $id, $var, $this->jsFilesData['wp-admin'][$id]);
+                endif;
+            endforeach;
         }, 999);
     }
 
