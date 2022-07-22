@@ -10,17 +10,25 @@ class Assets
 {
     protected $baseUrl;
     protected $path;
-    protected $cssFiles     = [
+    protected $localCssFiles     = [
+        'site'      => [],
+        'wp-admin'  => [],
+    ];
+    protected $localJsFiles      = [
+        'site'      => [],
+        'wp-admin'  => [],
+    ];
+    protected $localJsFilesData  = [
         'site'      => [],
         'wp-admin'  => []
     ];
-    protected $jsFiles      = [
+    protected $externalCssFiles  = [
         'site'      => [],
-        'wp-admin'  => []
+        'wp-admin'  => [],
     ];
-    protected $jsFilesData  = [
+    protected $externalJsFiles   = [
         'site'      => [],
-        'wp-admin'  => []
+        'wp-admin'  => [],
     ];
 
     private static $instances = [];
@@ -71,49 +79,67 @@ class Assets
     public function registerCss(string $file, string $id = null): void
     {
         $id = $id ? $id : $file;
-        $this->cssFiles['site'][$id] = $file;
+        $this->localCssFiles['site'][$id] = $file;
     }
 
     public function registerJs(string $file, string $id = null): void
     {
         $id = $id ? $id : $file;
-        $this->jsFiles['site'][$id] = $file;
+        $this->localJsFiles['site'][$id] = $file;
+    }
+
+    public function registerExternalCss(string $url, string $id, string $loadOn = 'site'): void
+    {
+        $this->externalCssFiles[ $loadOn ][ $id ] = $url;
+    }
+
+    public function registerExternalJs(string $url, string $id, string $loadOn = 'site'): void
+    {
+        $this->externalJsFiles[ $loadOn ][ $id ] = $url;
     }
 
     public function localizeJs(string $id, array $data): void
     {
-        $this->jsFilesData['site'][$id] = $data;
+        $this->localJsFilesData['site'][$id] = $data;
     }
 
     public function registerAdminCss(string $file, string $id = null): void
     {
         $id = $id ? $id : $file;
-        $this->cssFiles['wp-admin'][$id] = $file;
+        $this->localCssFiles['wp-admin'][$id] = $file;
     }
 
     public function registerAdminJs(string $file, string $id = null): void
     {
         $id = $id ? $id : $file;
-        $this->jsFiles['wp-admin'][$id] = $file;
+        $this->localJsFiles['wp-admin'][$id] = $file;
     }
 
     public function localizeAdminJs(string $id, array $data): void
     {
-        $this->jsFilesData['wp-admin'][$id] = $data;
+        $this->localJsFilesData['wp-admin'][$id] = $data;
     }
 
     private function enqueueAssets(): void
     {
         add_action('wp_enqueue_scripts', function () {
-            foreach ($this->cssFiles['site'] as $id => $file) :
+            foreach ($this->externalCssFiles['site'] as $id => $url) :
+                wp_enqueue_style(App::PREFIX . $id, $url, [], null);
+            endforeach;
+
+            foreach ($this->localCssFiles['site'] as $id => $file) :
                 wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::VERSION);
             endforeach;
 
-            foreach ($this->jsFiles['site'] as $id => $file) :
+            foreach ($this->externalJsFiles['site'] as $id => $url) :
+                wp_enqueue_script(App::PREFIX . $id, $url, ['jquery'], null, true);
+            endforeach;
+
+            foreach ($this->localJsFiles['site'] as $id => $file) :
                 wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::VERSION, true);
 
-                if (isset($this->jsFilesData['site'][$id])) :
-                    wp_localize_script(App::PREFIX . $id, $id . '_data', $this->jsFilesData['site'][$id]);
+                if (isset($this->localJsFilesData['site'][$id])) :
+                    wp_localize_script(App::PREFIX . $id, $id . '_data', $this->localJsFilesData['site'][$id]);
                 endif;
             endforeach;
 
@@ -124,16 +150,24 @@ class Assets
     private function enqueueAdminAssets(): void
     {
         add_action('admin_enqueue_scripts', function () {
-            foreach ($this->cssFiles['wp-admin'] as $id => $file) :
+            foreach ($this->externalCssFiles['wp-admin'] as $id => $url) :
+                wp_enqueue_style(App::PREFIX . $id, $url, [], null);
+            endforeach;
+
+            foreach ($this->localCssFiles['wp-admin'] as $id => $file) :
                 wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::VERSION);
             endforeach;
 
-            foreach ($this->jsFiles['wp-admin'] as $id => $file) :
+            foreach ($this->externalJsFiles['wp-admin'] as $id => $url) :
+                wp_enqueue_script(App::PREFIX . $id, $url, ['jquery'], null, true);
+            endforeach;
+
+            foreach ($this->localJsFiles['wp-admin'] as $id => $file) :
                 wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::VERSION, true);
 
-                if (isset($this->jsFilesData['wp-admin'][$id])) :
+                if (isset($this->localJsFilesData['wp-admin'][$id])) :
                     $var = str_replace('-', '_', sanitize_title($id)) . '_data';
-                    wp_localize_script(App::PREFIX . $id, $var, $this->jsFilesData['wp-admin'][$id]);
+                    wp_localize_script(App::PREFIX . $id, $var, $this->localJsFilesData['wp-admin'][$id]);
                 endif;
             endforeach;
         }, 999);
