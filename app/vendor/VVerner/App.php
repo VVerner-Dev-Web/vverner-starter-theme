@@ -37,14 +37,19 @@ class App
             $dependencies = array_diff(scandir($path), $ignoredFiles);
 
             foreach ($dependencies as $dependency) :
-                $dPath = $path . '/' . $dependency;
+                $dPath = $path . DIRECTORY_SEPARATOR . $dependency;
                 self::loadDependencies($dPath);
             endforeach;
 
         elseif (is_file($path)) :
-            if (strpos($path, '.php') !== false) : 
+            $isPhpFile = strpos($path, '.php') !== false;
+            $isDevFile = strpos($path, '.dev') !== false;
+            $isDevMode = self::isDevMode();
+
+            if  ( $isPhpFile || ( $isDevMode && $isDevFile && $isPhpFile ) ) : 
                 require_once $path;
             endif;
+            
         endif;
     }
 
@@ -76,5 +81,38 @@ class App
                 echo '<pre>';
             });
         endif;
+    }
+
+    public static function getVersion(): string
+    {
+       return self::isDevMode() ? uniqid() : self::VERSION;
+    }
+
+    public static function isDevMode(): bool
+    {
+        return self::getEnvironmentType() === 'DEV';
+    }
+
+    public static function getEnvironmentType(): string
+    {
+        if (defined('VV_ENVIRONMENT_TYPE') && VV_ENVIRONMENT_TYPE) : 
+            return VV_ENVIRONMENT_TYPE;
+        endif;
+
+        $url        = home_url();
+        $currentEnv = 'PRD';
+        $knownPaths = [
+            '.dev'          => 'DEV', 
+            '-sandbox.com'  => 'DEV'  
+        ];
+
+        foreach ($knownPaths as $path => $env) :
+            if ( strpos($url, $path) ) :
+                $currentEnv = $env;
+                break;
+            endif;
+        endforeach;
+        
+        return $currentEnv;
     }
 }

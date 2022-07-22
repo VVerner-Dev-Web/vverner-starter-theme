@@ -123,12 +123,14 @@ class Assets
     private function enqueueAssets(): void
     {
         add_action('wp_enqueue_scripts', function () {
+            
+
             foreach ($this->externalCssFiles['site'] as $id => $url) :
                 wp_enqueue_style(App::PREFIX . $id, $url, [], null);
             endforeach;
 
             foreach ($this->localCssFiles['site'] as $id => $file) :
-                wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::VERSION);
+                wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::getVersion());
             endforeach;
 
             foreach ($this->externalJsFiles['site'] as $id => $url) :
@@ -136,7 +138,7 @@ class Assets
             endforeach;
 
             foreach ($this->localJsFiles['site'] as $id => $file) :
-                wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::VERSION, true);
+                wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::getVersion(), true);
 
                 if (isset($this->localJsFilesData['site'][$id])) :
                     wp_localize_script(App::PREFIX . $id, $id . '_data', $this->localJsFilesData['site'][$id]);
@@ -155,7 +157,7 @@ class Assets
             endforeach;
 
             foreach ($this->localCssFiles['wp-admin'] as $id => $file) :
-                wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::VERSION);
+                wp_enqueue_style(App::PREFIX . $id, $this->getCssFileUrl($file), [], App::getVersion());
             endforeach;
 
             foreach ($this->externalJsFiles['wp-admin'] as $id => $url) :
@@ -163,7 +165,7 @@ class Assets
             endforeach;
 
             foreach ($this->localJsFiles['wp-admin'] as $id => $file) :
-                wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::VERSION, true);
+                wp_enqueue_script(App::PREFIX . $id, $this->getJsFileUrl($file), ['jquery'], App::getVersion(), true);
 
                 if (isset($this->localJsFilesData['wp-admin'][$id])) :
                     $var = str_replace('-', '_', sanitize_title($id)) . '_data';
@@ -190,7 +192,7 @@ class Assets
                     App::PREFIX . $post->post_type . '-' . $post->post_name,
                     $this->getCssFileUrl($postFile),
                     [],
-                    App::VERSION
+                    App::getVersion()
                 );
             endif;
 
@@ -199,7 +201,7 @@ class Assets
                     App::PREFIX . $post->post_type,
                     $this->getCssFileUrl($typeFile),
                     [],
-                    App::VERSION
+                    App::getVersion()
                 );
             endif;
 
@@ -208,7 +210,7 @@ class Assets
                     App::PREFIX . $post->post_type . '-' . $post->post_name,
                     $this->getJsFileUrl($postFile),
                     ['jquery'],
-                    App::VERSION,
+                    App::getVersion(),
                     true
                 );
             endif;
@@ -218,7 +220,7 @@ class Assets
                     App::PREFIX . $post->post_type,
                     $this->getJsFileUrl($typeFile),
                     ['jquery'],
-                    App::VERSION,
+                    App::getVersion(),
                     true
                 );
             endif;
