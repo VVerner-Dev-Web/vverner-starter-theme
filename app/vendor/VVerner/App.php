@@ -10,7 +10,7 @@ class App
 {
     private static $instances = [];
 
-    public const VERSION = '2.1.0';
+    public const VERSION = VV_THEME_VERSION;
     public const PREFIX  = 'vv-';
 
     protected function __construct()
