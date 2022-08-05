@@ -40,7 +40,7 @@ class Shortcode
         endif;
 
             add_ux_builder_shortcode(App::PREFIX . $this->name, [
-                'name'              => $uxBuilderName ? $this->uxBuilderName : $this->name,
+                'name'              => $this->uxBuilderName ? $this->uxBuilderName : $this->name,
                 'category'          => 'VVerner',
                 'options'           => $this->options
             ]);
