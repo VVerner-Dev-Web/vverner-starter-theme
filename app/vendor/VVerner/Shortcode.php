@@ -7,7 +7,7 @@ defined('ABSPATH') || exit('No direct script access allowed');
 class Shortcode
 {
     private $name;
-    private $UxBuilderName;
+    private $uxBuilderName;
     private $atts = [];
     private $options = [];
 
@@ -40,7 +40,7 @@ class Shortcode
         endif;
 
             add_ux_builder_shortcode(App::PREFIX . $this->name, [
-                'name'              => $UxBuilderName ? $this->UxBuilderName : $this->name,
+                'name'              => $uxBuilderName ? $this->uxBuilderName : $this->name,
                 'category'          => 'VVerner',
                 'options'           => $this->options
             ]);
@@ -71,8 +71,8 @@ class Shortcode
         Views::getInstance()->getForShortcode($sc, $args);
     }
 
-    public function setUxBuilderName(string $UxBuilderName): void
+    public function setuxBuilderName(string $uxBuilderName): void
     {
-        $this->UxBuilderName = $UxBuilderName; 
+        $this->uxBuilderName = $uxBuilderName; 
     }
 }

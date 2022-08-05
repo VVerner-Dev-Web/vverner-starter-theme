@@ -70,7 +70,6 @@ class Taxonomy
          'add_or_remove_items'   => 'Adicionar ou remover ' . $this->pluralName,
          'choose_from_most_used' => 'Escolher dentre os mais usados',
          'popular_items'         => 'Mais usados',
-         'search_items'          => 'Pesquisar',
          'separate_items_with_commas' => 'Separe os valores por vírgula',
       ];
    }

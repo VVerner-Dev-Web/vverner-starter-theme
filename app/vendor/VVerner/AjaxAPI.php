@@ -85,10 +85,10 @@ class AjaxAPI
       $response  = apply_filters('vv_api-' . $route, $response, $data);
 
       if (isset($response['error']) && $response['error']) : 
-         $this->sendError($response);
-      else : 
-         $this->sendSuccess($response);
+         $this->sendError($response);         
       endif;
+
+      $this->sendSuccess($response);
    }
 
    public function getApiMandatoryFields(string $route): string

@@ -50,12 +50,12 @@ class Views
    {
       $file = $this->path . $view . '.php';
 
-      if (file_exists($file)) : 
-         extract($context);
-         require $file;
-      else : 
+      if (!file_exists($file)) : 
          throw new Exception('View not found: ' . $file);
       endif;
+
+      extract($context);
+      require $file;
    }
 
    public function createForShortcode(string $sc): void
