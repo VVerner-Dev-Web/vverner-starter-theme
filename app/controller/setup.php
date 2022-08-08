@@ -48,8 +48,9 @@ add_action('init', function(){
  * Move o jquery para o footer
  */
 add_action('wp_enqueue_scripts', function(){
-  wp_scripts()->add_data( 'jquery', 'group', 1 );
-  wp_scripts()->add_data( 'jquery-core', 'group', 1 );
-  wp_scripts()->add_data( 'jquery-migrate', 'group', 1 );
-
+  if (!is_admin()) :
+    wp_scripts()->add_data( 'jquery', 'group', 1 );
+    wp_scripts()->add_data( 'jquery-core', 'group', 1 );
+    wp_scripts()->add_data( 'jquery-migrate', 'group', 1 );
+  endif;
 });
