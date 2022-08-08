@@ -20,28 +20,36 @@ remove_action('wp_print_styles', 'print_emoji_styles');
  * Limpa o conteúdo dos posts de erros comuns
  */
 add_filter('the_content', function ($content) {
-    $patterns = [
-        '&nbsp;',
-        '<p></p>',
-        '<p>&nbsp;</p>',
-        '<p>&nbsp;</p>',
-        '<p class="wp-block-paragraph"></p>',
-        '<li></li>'
-    ];
+  $patterns = [
+    '&nbsp;',
+    '<p></p>',
+    '<p>&nbsp;</p>',
+    '<p class="wp-block-paragraph"></p>',
+    '<li></li>'
+  ];
 
-    foreach ($patterns as $pattern) :
-        $content = str_replace($pattern, '', $content);
-    endforeach;
+  foreach ($patterns as $pattern) :
+    $content = str_replace($pattern, '', $content);
+  endforeach;
 
-    return $content;
-  
+  return $content;
 }, 100);
 
 /**
  * Trigger para iniciar o jumpstart
  */
 add_action('init', function(){
-    if (defined('VV_DO_JUMPSTART') && VV_DO_JUMPSTART) :
-        do_action('vverner/jumpstart');
-    endif;
+  if (defined('VV_DO_JUMPSTART') && VV_DO_JUMPSTART) :
+    do_action('vverner/jumpstart');
+  endif;
+});
+
+/**
+ * Move o jquery para o footer
+ */
+add_action('wp_enqueue_scripts', function(){
+  wp_scripts()->add_data( 'jquery', 'group', 1 );
+  wp_scripts()->add_data( 'jquery-core', 'group', 1 );
+  wp_scripts()->add_data( 'jquery-migrate', 'group', 1 );
+
 });
