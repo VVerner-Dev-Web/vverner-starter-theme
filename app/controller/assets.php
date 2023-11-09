@@ -2,8 +2,4 @@
 
 $assets = VVerner\Assets::getInstance();
 $assets->registerCss('main');
-
 $assets->registerJs('app');
-$assets->localizeJs('app', [
-  'url'    => VVerner\AjaxAPI::getInstance()->getRequestUrl()
-]);

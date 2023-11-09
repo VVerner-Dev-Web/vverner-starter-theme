@@ -3,12 +3,12 @@
 /**
  * Remove as meta tags do WP do head
  */
-add_filter( 'the_generator', '__return_false' );
+add_filter('the_generator', '__return_false');
 
 /**
  * Desabilita o XMLRPC.
  */
-add_filter( 'xmlrpc_enabled', '__return_false' );
+add_filter('xmlrpc_enabled', '__return_false');
 
 /**
  * Remove os emojis padrões do wp
@@ -36,21 +36,12 @@ add_filter('the_content', function ($content) {
 }, 100);
 
 /**
- * Trigger para iniciar o jumpstart
- */
-add_action('init', function(){
-  if (defined('VV_DO_JUMPSTART') && VV_DO_JUMPSTART) :
-    do_action('vverner/jumpstart');
-  endif;
-});
-
-/**
  * Move o jquery para o footer
  */
-add_action('wp_enqueue_scripts', function(){
+add_action('wp_enqueue_scripts', function () {
   if (!is_admin()) :
-    wp_scripts()->add_data( 'jquery', 'group', 1 );
-    wp_scripts()->add_data( 'jquery-core', 'group', 1 );
-    wp_scripts()->add_data( 'jquery-migrate', 'group', 1 );
+    wp_scripts()->add_data('jquery', 'group', 1);
+    wp_scripts()->add_data('jquery-core', 'group', 1);
+    wp_scripts()->add_data('jquery-migrate', 'group', 1);
   endif;
 });

@@ -1,13 +1,6 @@
 <?php defined('ABSPATH') || exit('No direct script access allowed');
 
-/**
- * Jumpstart
- */
-add_action('vverner/jumpstart', function(){
-  if (get_option('vverner_theme-jumpstart')) :
-    return;
-  endif;
-
+add_action('vverner/jumpstart', function () {
   update_option('vverner_theme-jumpstart', 1, false);
 
   do_action('vverner/jumpstart/posts');
