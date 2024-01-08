@@ -1,6 +1,6 @@
 <?php
 
-namespace VVerner;
+namespace Voppi\Ajax;
 
 abstract class AjaxAdapter
 {
@@ -11,6 +11,18 @@ abstract class AjaxAdapter
   public static function attach(): void
   {
     $cls = new static;
+
+    if (!defined('VJAX_ATTACHED')) :
+      define('VJAX_ATTACHED', true);
+
+      add_action('parse_request', function () {
+        if (isset($_REQUEST['vajx']) && $_REQUEST['vajx']) :
+          do_action('vverner-ajax/' . $_REQUEST['vajx']);
+          exit;
+        endif;
+      });
+    endif;
+
     $adapterMethods = get_class_methods(__CLASS__);
     $methods = get_class_methods($cls);
 
@@ -30,7 +42,7 @@ abstract class AjaxAdapter
     $action = explode('::', $method);
     $action = array_pop($action);
 
-    if (!wp_verify_nonce($nonce, $action)) :
+    if (!wp_verify_nonce($nonce, self::methodEndpoint($action))) :
       $this->response(['success' => false, 'error' => 'invalidNonce']);
     endif;
   }
