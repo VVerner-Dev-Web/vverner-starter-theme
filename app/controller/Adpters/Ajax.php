@@ -16,9 +16,8 @@ abstract class Ajax
       define('VJAX_ATTACHED', true);
 
       add_action('parse_request', function () {
-
-        if (isset($_REQUEST['vajx']) && $_REQUEST['vajx']) :
-          do_action('vverner-ajax/' . $_REQUEST['vajx']);
+        if (isset($_REQUEST['vjax']) && $_REQUEST['vjax']) :
+          do_action('vverner-ajax/' . $_REQUEST['vjax']);
           exit;
         endif;
       });
