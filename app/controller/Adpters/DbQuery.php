@@ -121,7 +121,7 @@ abstract class DbQuery
     $db = $wpdb->posts;
 
     if (isset($this->cls)) :
-      $db = $this->cls::TABLE;
+      $db = $this->cls::$TABLE;
     elseif (isset($this->from) && $this->from) :
       $db = $this->from;
     endif;

@@ -6,7 +6,7 @@ use stdClass;
 
 abstract class Entity
 {
-  const TABLE = 'voppi_orders';
+  public string $TABLE;
 
   public int $id;
 
@@ -35,7 +35,7 @@ abstract class Entity
     global $wpdb;
 
     $wpdb->delete(
-      self::TABLE,
+      self::$TABLE,
       ['id' => $this->id],
       ['%d']
     );
@@ -45,7 +45,7 @@ abstract class Entity
   {
     global $wpdb;
 
-    $created = $wpdb->insert(self::TABLE, $this->db('value'), $this->db('format'));
+    $created = $wpdb->insert(self::$TABLE, $this->db('value'), $this->db('format'));
 
     if ($created) :
       $this->id = (int) $wpdb->insert_id;
@@ -59,7 +59,7 @@ abstract class Entity
     global $wpdb;
 
     $updated = $wpdb->update(
-      self::TABLE,
+      self::$TABLE,
       $this->db('value'),
       ['id' => $this->id],
       $this->db('format'),
@@ -86,7 +86,7 @@ abstract class Entity
   {
     global $wpdb;
 
-    $sql  = "SELECT * FROM " . self::TABLE . ' WHERE 1 id = ' . $id;
+    $sql  = "SELECT * FROM " . self::$TABLE . ' WHERE 1 id = ' . $id;
     $data = $wpdb->get_row($sql);
 
     if ($data) :
