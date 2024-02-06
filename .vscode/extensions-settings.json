@@ -1,7 +1,7 @@
 {
-    "autoprefixer.formatOnSave": true,
-    "gitlens.hovers.currentLine.over": "line",
-    "auto-rename-tag.activationOnLanguage": [
-        "*"
-    ]
+  "autoprefixer.formatOnSave": true,
+  "gitlens.hovers.currentLine.over": "line",
+  "auto-rename-tag.activationOnLanguage": [
+    "*"
+  ]
 }

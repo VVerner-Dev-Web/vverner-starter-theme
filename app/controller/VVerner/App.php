@@ -26,14 +26,6 @@ class App
     throw new Exception("Cannot unserialize a singleton.");
   }
 
-  public static function attachAjaxMiddleware(): void
-  {
-    if (isset($_REQUEST['vajx']) && $_REQUEST['vajx']) :
-      do_action('vverner-ajax/' . $_REQUEST['vajx']);
-      exit;
-    endif;
-  }
-
   public static function attachJumpStart(): void
   {
     add_action('after_switch_theme', function () { ?>
@@ -115,10 +107,6 @@ class App
 
   public static function getEnvironmentType(): string
   {
-    if (defined('VV_ENVIRONMENT_TYPE') && VV_ENVIRONMENT_TYPE) :
-      return VV_ENVIRONMENT_TYPE;
-    endif;
-
     $url        = home_url();
     $currentEnv = 'PRD';
     $knownPaths = [

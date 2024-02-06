@@ -1,4 +1,0 @@
-// ================
-// PHPMD
-// ================
-phpmd . json cleancode,codesize,unusedcode,naming,design,controversial --reportfile phpmd-report.json --suffixes php,html
