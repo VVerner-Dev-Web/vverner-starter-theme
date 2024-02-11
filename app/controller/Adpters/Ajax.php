@@ -1,8 +1,8 @@
 <?php
 
-namespace Voppi\Ajax;
+namespace VVerner\Adapters;
 
-abstract class AjaxAdapter
+abstract class Ajax
 {
   protected function __construct()
   {
@@ -16,8 +16,8 @@ abstract class AjaxAdapter
       define('VJAX_ATTACHED', true);
 
       add_action('parse_request', function () {
-        if (isset($_REQUEST['vajx']) && $_REQUEST['vajx']) :
-          do_action('vverner-ajax/' . $_REQUEST['vajx']);
+        if (isset($_REQUEST['vjax']) && $_REQUEST['vjax']) :
+          do_action('vverner-ajax/' . $_REQUEST['vjax']);
           exit;
         endif;
       });
@@ -31,9 +31,22 @@ abstract class AjaxAdapter
     array_map(fn ($method) => add_action('vverner-ajax/' . self::methodEndpoint($method), [$cls, $method]), $methods);
   }
 
-  protected function response(mixed $data): void
+  protected function validateCapability(string $capability): void
   {
-    wp_send_json($data);
+    if (!current_user_can($capability)) :
+      $this->response([
+        'error' => 'you don\'t have permission to use this feature'
+      ]);
+    endif;
+  }
+
+  protected function validateLogin(): void
+  {
+    if (!is_user_logged_in()) :
+      $this->response([
+        'error' => 'you must be logged in to user this feature'
+      ]);
+    endif;
   }
 
   protected function validateNonce(string $method): void
@@ -45,6 +58,35 @@ abstract class AjaxAdapter
     if (!wp_verify_nonce($nonce, self::methodEndpoint($action))) :
       $this->response(['success' => false, 'error' => 'invalidNonce']);
     endif;
+  }
+
+  protected function validateExternalLogin(): void
+  {
+    if (is_user_logged_in()) :
+      return;
+    endif;
+
+    add_filter('application_password_is_api_request', '__return_true');
+
+    $auth = getallheaders()['Authorization'] ?? '';
+    $auth = explode(':', base64_decode(str_replace('Basic ', '', $auth)));
+
+    if (count($auth) !== 2) :
+      $this->response(['error' => 'Authentication failed']);
+    endif;
+
+    $user = wp_authenticate_application_password(null, $auth[0], $auth[1]);
+
+    if (!$user || is_wp_error($user)) :
+      $this->response(['error' => 'Authentication failed']);
+    endif;
+
+    wp_set_current_user($user->ID, $user->user_login);
+  }
+
+  protected function response(mixed $data): void
+  {
+    wp_send_json($data);
   }
 
   protected function uploadFile(array $file)
