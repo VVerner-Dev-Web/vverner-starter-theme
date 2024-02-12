@@ -131,4 +131,36 @@ class Schema
 		$sql = "DROP TABLE IF EXISTS {$this->table}";
 		$wpdb->query($sql);
 	}
+
+	public function alter(string $action):Schema
+	{
+		global $wpdb;
+		
+		$this->fieldsToSql();
+		$sql = "ALTER TABLE {$this->table}";
+		
+		switch($action):
+			case 'add':
+				$sql .= " ADD COLUMN {$this->sqlFields}";
+			break;
+
+			case 'drop':
+				$column = array_key_first($this->fields);
+				$sql .= " DROP COLUMN {$column}";
+			break;
+
+			case 'alter':
+				$sql .= " MODIFY COLUMN {$this->sqlFields}";
+			break;
+		endswitch;
+		$wpdb->query($sql);
+
+		return $this;
+	}
+
+	public function resetFields():Schema
+	{
+		$this->fields = [];
+		return $this;
+	}
 }
