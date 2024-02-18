@@ -12,13 +12,14 @@ class Schema
 		$this->table = $table;
 	}
 
-	public function createIfNotExists(): void
+	public function createIfNotExists(): bool
 	{
 		global $wpdb;
 		
 		$this->fieldsToSql();
 		$sql = "CREATE TABLE IF NOT EXISTS {$this->table} ({$this->sqlFields})";
-		$wpdb->query($sql);
+		$result = $wpdb->query($sql);
+		return $result;
 	}
 
 	private function fieldsToSql():void
