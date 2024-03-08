@@ -22,6 +22,7 @@ function vvernerThemeAutoLoader(string $path = null): void
 
       $className = explode(DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR, $path);
       $className = '\\VVerner\\' . str_replace('.php', '', end($className));
+      $className = str_replace('/', '\\', $className);
 
       if (class_exists($className) && method_exists($className, 'attach')) :
         error_log($className . ' attached');
