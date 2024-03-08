@@ -1,6 +1,6 @@
 <?php
 
-namespace VVerner;
+namespace VVerner\Core;
 
 use WP_REST_Request;
 
@@ -16,12 +16,32 @@ class JumpStart
   {
     $cls = new self();
 
-    add_action('vverner/jumpstart', [$cls, 'lock'], 10);
-    add_action('vverner/jumpstart', [$cls, 'posts'], 20);
-    add_action('vverner/jumpstart', [$cls, 'pages'], 30);
-    add_action('vverner/jumpstart', [$cls, 'comments'], 40);
-    add_action('vverner/jumpstart', [$cls, 'plugins'], 50);
-    add_action('vverner/jumpstart', [$cls, 'configs'], 60);
+    add_action('after_switch_theme', [$cls, 'loadScript']);
+    add_action('init', [$cls, 'maybeRun']);
+  }
+
+  public function loadScript(): void
+  {
+?>
+    <script>
+      const confirmed = confirm('Rodar o jumpstart?');
+      location.href = '<?= admin_url() ?>?jumpstart=' + confirmed;
+    </script>
+<?php
+  }
+
+  public function maybeRun(): void
+  {
+    if (!filter_input(INPUT_GET, 'jumpstart') == 'true') :
+      return;
+    endif;
+
+    $this->lock();
+    $this->posts();
+    $this->pages();
+    $this->comments();
+    $this->plugins();
+    $this->configs();
   }
 
   public function lock(): void

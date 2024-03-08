@@ -1,6 +1,6 @@
 <?php
 
-namespace VVerner\Adapters;
+namespace VVerner\Adapter;
 
 abstract class Ajax
 {

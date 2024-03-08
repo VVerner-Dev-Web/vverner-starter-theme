@@ -1,9 +1,8 @@
 <?php
 
-namespace VVerner\Adapters;
+namespace VVerner\Adapter;
 
 use stdClass;
-use VVerner\App;
 
 abstract class DbQuery
 {
@@ -95,7 +94,7 @@ abstract class DbQuery
   {
     global $wpdb;
 
-    if (App::isDevMode()) :
+    if (vvernerThemeInDev()) :
       error_log($sql);
     endif;
 

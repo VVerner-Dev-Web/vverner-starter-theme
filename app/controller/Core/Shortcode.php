@@ -1,6 +1,6 @@
 <?php
 
-namespace VVerner;
+namespace VVerner\Core;
 
 defined('ABSPATH') || exit('No direct script access allowed');
 
@@ -27,7 +27,7 @@ class Shortcode
 
   public function addShortcode(): void
   {
-    add_shortcode(App::PREFIX . $this->name, function ($args) {
+    add_shortcode('vverner_' . $this->name, function ($args) {
       ob_start();
 
       $args = shortcode_atts($this->atts, $args);
@@ -44,7 +44,7 @@ class Shortcode
       require_once get_template_directory() . '/inc/builder/helpers.php';
     endif;
 
-    add_ux_builder_shortcode(App::PREFIX . $this->name, [
+    add_ux_builder_shortcode('vverner_' . $this->name, [
       'name'              => $this->uxBuilderName ? $this->uxBuilderName : $this->name,
       'category'          => 'VVerner',
       'options'           => $this->options
@@ -66,11 +66,17 @@ class Shortcode
   private function addDefaultAttributes(): void
   {
     $this->addAttribute('Classe extra de CSS', 'class', '');
+    $this->addAttribute('ID', 'id', '');
   }
 
   private function getView(string $sc, array $args = []): void
   {
-    Views::getInstance()->createForShortcode($sc);
-    Views::getInstance()->getForShortcode($sc, $args);
+    $file = VV_APP . '/views/' . $sc . '.php';
+
+    if (!file_exists($file)) :
+      file_put_contents($file, '');
+    endif;
+
+    require_once $file;
   }
 }
