@@ -31,8 +31,13 @@ class Shortcode
       ob_start();
 
       $args = shortcode_atts($this->atts, $args);
-      $args = apply_filters('vv_shortcode-' . $this->name, $args);
-      $this->getView($this->name, $args);
+      $file = VV_APP . '/views/' . $this->name . '.php';
+
+      if (!file_exists($file)) :
+        file_put_contents($file, 'auto generate');
+      endif;
+
+      require_once $file;
 
       return ob_get_clean();
     });
@@ -67,16 +72,5 @@ class Shortcode
   {
     $this->addAttribute('Classe extra de CSS', 'class', '');
     $this->addAttribute('ID', 'id', '');
-  }
-
-  private function getView(string $sc, array $args = []): void
-  {
-    $file = VV_APP . '/views/' . $sc . '.php';
-
-    if (!file_exists($file)) :
-      file_put_contents($file, '');
-    endif;
-
-    require_once $file;
   }
 }

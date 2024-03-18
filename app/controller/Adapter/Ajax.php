@@ -2,7 +2,7 @@
 
 namespace VVerner\Adapter;
 
-abstract class Ajax
+class Ajax
 {
   protected function __construct()
   {
