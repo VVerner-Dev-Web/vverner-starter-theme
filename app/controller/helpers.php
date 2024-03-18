@@ -17,7 +17,8 @@ function vvernerThemeEnv(): string
   $currentEnv = 'PRD';
   $knownPaths = [
     '.dev'          => 'DEV',
-    '-sandbox.com'  => 'DEV'
+    '-sandbox.com'  => 'DEV',
+    'kinsta.cloud'  => 'DEV'
   ];
 
   foreach ($knownPaths as $path => $env) :
