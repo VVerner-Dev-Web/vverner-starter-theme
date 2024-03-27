@@ -1,6 +1,10 @@
-<?php defined('ABSPATH') || exit('No direct script access allowed');
+<?php
 
-class VVernerThemeAutoLoader
+namespace VVerner\Core;
+
+defined('ABSPATH') || exit('No direct script access allowed');
+
+class AutoLoader
 {
   private function __construct()
   {
@@ -50,14 +54,18 @@ class VVernerThemeAutoLoader
 
   private function attachClass(string $path): void
   {
+    if (substr($path, -14) === 'AutoLoader.php') :
+      return;
+    endif;
+
     $className = explode(DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR, $path);
     $className = '\\VVerner\\' . str_replace('.php', '', end($className));
     $className = str_replace('/', '\\', $className);
 
-    if (class_exists($className) && method_exists($className, 'attach')) :
+    if (class_exists($className) && method_exists($className, 'attach') && strpos($className, '\Adapter\\') === false) :
       call_user_func([$className, 'attach']);
     endif;
   }
 }
 
-VVernerThemeAutoLoader::attach();
+AutoLoader::attach();
