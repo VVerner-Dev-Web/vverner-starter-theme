@@ -139,7 +139,6 @@ class JumpStart
     $plugins = [
       'contact-form-7',
       'contact-form-cfdb7',
-      'wp-smushit',
       'akismet',
       'cookie-law-info'
     ];
