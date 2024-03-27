@@ -22,6 +22,9 @@ class JumpStart
 
   public function loadScript(): void
   {
+    if (get_option('vverner_theme-jumpstart')) :
+      return;
+    endif;
 ?>
     <script>
       const confirmed = confirm('Rodar o jumpstart?');
