@@ -86,7 +86,7 @@ abstract class Entity
   {
     global $wpdb;
 
-    $sql  = "SELECT * FROM " . static::$TABLE . ' WHERE 1 id = ' . $id;
+    $sql  = "SELECT * FROM " . static::$TABLE . ' WHERE 1 AND id = ' . $id;
     $data = $wpdb->get_row($sql);
 
     if ($data) :
