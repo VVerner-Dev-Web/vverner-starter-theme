@@ -6,7 +6,7 @@ class Database
 {
   private array $tables;
 
-  private const SITE_PREFIX = 'vvtheme';
+  private const ACTION_PREFIX = 'vvtheme/db/';
 
   private function __construct()
   {
@@ -23,14 +23,17 @@ class Database
   {
     foreach ($this->tables as $table => $currentVersion) :
       $table   = implode('', array_map('ucfirst', explode('_', $table)));
-      $siteVersion = get_option(self::SITE_PREFIX . '/db/' . $table, '0.0.0');
+      $siteVersion = get_option(self::ACTION_PREFIX . $table, '0.0.0');
       if (version_compare($currentVersion, $siteVersion, '>')) :
+
+        do_action(self::ACTION_PREFIX . 'upgrade/before', $table, $currentVersion);
+
         $updated = call_user_func([$this, 'update' . $table], $table);
 
-        do_action(self::SITE_PREFIX . '/db/upgraded', $table, $currentVersion);
+        do_action(self::ACTION_PREFIX . 'upgrade/after', $table, $currentVersion);
 
         if ($updated) :
-          update_option(self::SITE_PREFIX . '/db/' . $table, $currentVersion, false);
+          update_option(self::ACTION_PREFIX . $table, $currentVersion, false);
         endif;
       endif;
     endforeach;
