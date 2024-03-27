@@ -24,11 +24,15 @@ class Updates
     $cls->load();
 
     add_filter('site_transient_update_plugins', [$cls, 'update']);
-    // add_action('upgrader_process_complete', [$cls, 'purge'], 10, 2);
+    add_action('upgrader_process_complete', [$cls, 'purge'], 10, 2);
   }
 
   private function load(): void
   {
+    if (!function_exists('get_plugin_data')) :
+      require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    endif;
+
     $data = get_plugin_data($this->slug, false, false);
 
     $this->version = $data['Version'];
