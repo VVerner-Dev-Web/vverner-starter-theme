@@ -12,9 +12,6 @@ class Updates
 
   private function __construct()
   {
-    // $this->version = '1.0';
-    // $this->cacheKey = 'misha_custom_upd';
-    // $this->cache_allowed = false;
   }
 
   public static function attach(): void
@@ -25,6 +22,35 @@ class Updates
 
     add_filter('site_transient_update_plugins', [$cls, 'update']);
     add_action('upgrader_process_complete', [$cls, 'purge'], 10, 2);
+  }
+
+  public function update($transient)
+  {
+    if (!$transient || empty($transient->checked)) {
+      return $transient;
+    }
+
+    $remote = $this->request();
+
+    if ($remote && version_compare($this->version, $remote->version, '<')) :
+      $update = (object) [
+        'slug'        => 'advanced-custom-fields-pro',
+        'plugin'      => 'advanced-custom-fields-pro/acf.php',
+        'new_version' => $remote->version,
+        'package'     => $remote->download_url,
+      ];
+
+      $transient->response[$update->plugin] = $update;
+    endif;
+
+    return $transient;
+  }
+
+  public function purge($upgrader, $options): void
+  {
+    if ('update' === $options['action'] && 'plugin' === $options['type']) :
+      delete_transient($this->cacheKey);
+    endif;
   }
 
   private function load(): void
@@ -59,34 +85,5 @@ class Updates
     endif;
 
     return $remote;
-  }
-
-  public function update($transient)
-  {
-    if (!$transient || empty($transient->checked)) {
-      return $transient;
-    }
-
-    $remote = $this->request();
-
-    if ($remote && version_compare($this->version, $remote->version, '<')) :
-      $update = (object) [
-        'slug'        => 'advanced-custom-fields-pro',
-        'plugin'      => 'advanced-custom-fields-pro/acf.php',
-        'new_version' => $remote->version,
-        'package'     => $remote->download_url,
-      ];
-
-      $transient->response[$update->plugin] = $update;
-    endif;
-
-    return $transient;
-  }
-
-  public function purge($upgrader, $options): void
-  {
-    if ('update' === $options['action'] && 'plugin' === $options['type']) :
-      delete_transient($this->cacheKey);
-    endif;
   }
 }
