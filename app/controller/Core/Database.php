@@ -4,7 +4,7 @@ namespace VVerner\Core;
 
 class Database
 {
-  private array $tables;
+  private readonly array $tables;
 
   private const ACTION_PREFIX = 'vvtheme/db/';
 
@@ -13,10 +13,10 @@ class Database
     $this->tables = [];
   }
 
-  public static function attach()
+  public static function attach(): void
   {
     $cls = new self();
-    add_action('init', [$cls, 'updateDb'], PHP_INT_MAX);
+    add_action('init', $cls->updateDb(...), PHP_INT_MAX);
   }
 
   public function updateDb(): void

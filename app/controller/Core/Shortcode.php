@@ -6,18 +6,16 @@ defined('ABSPATH') || exit('No direct script access allowed');
 
 class Shortcode
 {
-  private $name;
-  private $uxBuilderName;
-  private $atts = [];
-  private $options = [];
+  private ?string $uxBuilderName = null;
+  private array $atts = [];
+  private array $options = [];
 
-  public function __construct(string $name)
+  public function __construct(private readonly string $name)
   {
-    $this->name = $name;
     $this->addDefaultAttributes();
 
-    add_action('init', [$this, 'addShortcode']);
-    add_action('ux_builder_setup', [$this, 'uxBuilderSetup']);
+    add_action('init', $this->addShortcode(...));
+    add_action('ux_builder_setup', $this->uxBuilderSetup(...));
   }
 
   public function setUxBuilderName(string $uxBuilderName): void
@@ -27,7 +25,7 @@ class Shortcode
 
   public function addShortcode(): void
   {
-    add_shortcode('vverner_' . $this->name, function ($args) {
+    add_shortcode('vverner_' . $this->name, function ($args): string|false {
       ob_start();
 
       $args = shortcode_atts($this->atts, $args);
@@ -50,7 +48,7 @@ class Shortcode
     endif;
 
     add_ux_builder_shortcode('vverner_' . $this->name, [
-      'name'              => $this->uxBuilderName ? $this->uxBuilderName : $this->name,
+      'name'              => $this->uxBuilderName ?: $this->name,
       'category'          => 'VVerner',
       'options'           => $this->options
     ]);
@@ -60,7 +58,7 @@ class Shortcode
   {
     $this->atts[$key] = $defaultValue;
     $this->options[$key] = [
-      'type'       => $options ? 'select' : 'textfield',
+      'type'       => $options !== [] ? 'select' : 'textfield',
       'heading'    => $heading,
       'default'    => $defaultValue,
       'options'    => $options,

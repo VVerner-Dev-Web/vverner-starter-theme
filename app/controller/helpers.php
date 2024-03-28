@@ -3,7 +3,7 @@
 function isVVernerUser(): bool
 {
   $data = get_userdata(get_current_user_id());
-  return strpos($data->user_email, 'vverner') !== false;
+  return $data && str_contains((string) $data->user_email, 'vverner');
 }
 
 function vvernerThemeInDev(): bool
@@ -22,7 +22,7 @@ function vvernerThemeEnv(): string
   ];
 
   foreach ($knownPaths as $path => $env) :
-    if (strpos($url, $path)) :
+    if (strpos((string) $url, $path)) :
       $currentEnv = $env;
       break;
     endif;

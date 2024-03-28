@@ -15,7 +15,7 @@ abstract class Ajax
     if (!defined('VJAX_ATTACHED')) :
       define('VJAX_ATTACHED', true);
 
-      add_action('parse_request', function () {
+      add_action('parse_request', function (): void {
         if (isset($_REQUEST['vjax']) && $_REQUEST['vjax']) :
           do_action('vverner-ajax/' . $_REQUEST['vjax']);
           exit;
@@ -23,7 +23,7 @@ abstract class Ajax
       });
     endif;
 
-    $adapterMethods = get_class_methods(__CLASS__);
+    $adapterMethods = get_class_methods(self::class);
     $methods = get_class_methods($cls);
 
     $methods = array_diff($methods, $adapterMethods);
@@ -69,7 +69,7 @@ abstract class Ajax
     add_filter('application_password_is_api_request', '__return_true');
 
     $auth = getallheaders()['Authorization'] ?? '';
-    $auth = explode(':', base64_decode(str_replace('Basic ', '', $auth)));
+    $auth = explode(':', base64_decode(str_replace('Basic ', '', (string) $auth)));
 
     if (count($auth) !== 2) :
       $this->response(['error' => 'Authentication failed']);
@@ -104,9 +104,9 @@ abstract class Ajax
     $filename   = $upload['file'];
     $filetype   = $upload['type'];
     $attachment = [
-      'guid'           => WP_CONTENT_URL . '/' . basename($filename),
+      'guid'           => WP_CONTENT_URL . '/' . basename((string) $filename),
       'post_mime_type' => $filetype,
-      'post_title'     => preg_replace('/\.[^.]+$/', '', basename($filename)),
+      'post_title'     => preg_replace('/\.[^.]+$/', '', basename((string) $filename)),
       'post_content'   => '',
       'post_status'    => 'inherit'
     ];
@@ -121,7 +121,7 @@ abstract class Ajax
 
   protected function getParam(string $param, int $filter = FILTER_DEFAULT, int $options = 0)
   {
-    $value = isset($_REQUEST[$param]) ? $_REQUEST[$param] : null;
+    $value = $_REQUEST[$param] ?? null;
     return filter_var($value, $filter, $options);
   }
 
@@ -130,9 +130,9 @@ abstract class Ajax
     $className = explode('\\', static::class);
     $path = array_pop($className);
 
-    $path = ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '-$0', $path)), '-');
+    $path = ltrim(strtolower((string) preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '-$0', $path)), '-');
 
-    $endpoint = ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '-$0', $method)), '-');
+    $endpoint = ltrim(strtolower((string) preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '-$0', $method)), '-');
 
     return $path . '/' . $endpoint;
   }

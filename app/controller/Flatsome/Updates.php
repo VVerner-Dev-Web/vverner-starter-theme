@@ -7,8 +7,6 @@ defined('ABSPATH') || exit;
 class Updates
 {
   private string $cacheKey = 'vverner/flatsome/theme-update';
-  private string $slug = WP_PLUGIN_DIR . '/advanced-custom-fields-pro/acf.php';
-  private string $version;
 
   private function __construct()
   {
@@ -18,7 +16,7 @@ class Updates
   {
     $cls = new self();
 
-    add_filter('site_transient_update_themes', [$cls, 'update']);
+    add_filter('site_transient_update_themes', $cls->update(...));
   }
   public function update($transient)
   {
@@ -61,7 +59,7 @@ class Updates
         return false;
       }
 
-      $remote = json_decode(wp_remote_retrieve_body($remote));
+      $remote = json_decode((string) wp_remote_retrieve_body($remote));
 
       set_transient($this->cacheKey, $remote, DAY_IN_SECONDS);
     endif;

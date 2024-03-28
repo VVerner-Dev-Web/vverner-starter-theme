@@ -16,8 +16,8 @@ class JumpStart
   {
     $cls = new self();
 
-    add_action('after_switch_theme', [$cls, 'loadScript']);
-    add_action('init', [$cls, 'maybeRun']);
+    add_action('after_switch_theme', $cls->loadScript(...));
+    add_action('init', $cls->maybeRun(...));
   }
 
   public function loadScript(): void

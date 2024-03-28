@@ -6,7 +6,7 @@ use stdClass;
 
 abstract class DbQuery
 {
-  const RESULTS_PER_PAGE = 30;
+  public const RESULTS_PER_PAGE = 30;
 
   protected Entity $cls;
 
@@ -15,10 +15,6 @@ abstract class DbQuery
   private string $where = '1';
   private string $orderby = 'id';
   private string $order = 'DESC';
-
-  public function __construct()
-  {
-  }
 
   public function select(string $select): self
   {
@@ -87,7 +83,7 @@ abstract class DbQuery
 
     $results = $this->fetch($sql);
 
-    return (object) compact('results', 'pagination');
+    return (object) ['results' => $results, 'pagination' => $pagination];
   }
 
   private function fetch(string $sql)

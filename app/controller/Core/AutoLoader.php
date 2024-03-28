@@ -18,7 +18,7 @@ class AutoLoader
 
   private function load(string $path = null): void
   {
-    if (!$path) :
+    if ($path === null || $path === '' || $path === '0') :
       $path = VV_APP . '/controller';
     endif;
 
@@ -32,7 +32,7 @@ class AutoLoader
     $ignoredFiles = ['index.php', '..', '.'];
     $dependencies = array_diff(scandir($path), $ignoredFiles);
 
-    $files = array_filter($dependencies, fn ($dependency) => is_file($path . DIRECTORY_SEPARATOR . $dependency));
+    $files = array_filter($dependencies, fn ($dependency): bool => is_file($path . DIRECTORY_SEPARATOR . $dependency));
     $dependencies = array_diff($dependencies, $files);
 
     foreach ($files as $file) :
@@ -46,7 +46,7 @@ class AutoLoader
 
   private function loadFile(string $path): void
   {
-    if (substr($path, -4) === '.php') :
+    if (str_ends_with($path, '.php')) :
       require_once $path;
       $this->attachClass($path);
     endif;
@@ -54,7 +54,7 @@ class AutoLoader
 
   private function attachClass(string $path): void
   {
-    if (substr($path, -14) === 'AutoLoader.php') :
+    if (str_ends_with($path, 'AutoLoader.php')) :
       return;
     endif;
 
@@ -62,9 +62,11 @@ class AutoLoader
     $className = '\\VVerner\\' . str_replace('.php', '', end($className));
     $className = str_replace('/', '\\', $className);
 
-    if (class_exists($className) && method_exists($className, 'attach') && strpos($className, '\Adapter\\') === false) :
-      call_user_func([$className, 'attach']);
-    endif;
+    if (!class_exists($className) || !method_exists($className, 'attach') || str_contains($className, '\Adapter\\')) {
+      return;
+    }
+
+    call_user_func([$className, 'attach']);
   }
 }
 

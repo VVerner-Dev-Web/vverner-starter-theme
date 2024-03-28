@@ -20,8 +20,8 @@ class Updates
 
     $cls->load();
 
-    add_filter('site_transient_update_plugins', [$cls, 'update']);
-    add_action('upgrader_process_complete', [$cls, 'purge'], 10, 2);
+    add_filter('site_transient_update_plugins', $cls->update(...));
+    add_action('upgrader_process_complete', $cls->purge(...), 10, 2);
   }
 
   public function update($transient)
@@ -46,11 +46,12 @@ class Updates
     return $transient;
   }
 
-  public function purge($upgrader, $options): void
+  public function purge($upgrader, array $options): void
   {
-    if ('update' === $options['action'] && 'plugin' === $options['type']) :
-      delete_transient($this->cacheKey);
-    endif;
+    if ('update' !== $options['action'] || 'plugin' !== $options['type']) {
+      return;
+    }
+    delete_transient($this->cacheKey);
   }
 
   private function load(): void
@@ -79,7 +80,7 @@ class Updates
         return false;
       }
 
-      $remote = json_decode(wp_remote_retrieve_body($remote));
+      $remote = json_decode((string) wp_remote_retrieve_body($remote));
 
       set_transient($this->cacheKey, $remote, DAY_IN_SECONDS);
     endif;

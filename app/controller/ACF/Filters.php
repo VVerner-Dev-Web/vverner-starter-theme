@@ -13,8 +13,8 @@ class Filters
   public static function attach(): void
   {
     $cls = new self();
-    add_filter('acf/settings/save_json', [$cls, 'saveJson']);
-    add_filter('acf/settings/load_json', [$cls, 'loadPath']);
+    add_filter('acf/settings/save_json', $cls->saveJson(...));
+    add_filter('acf/settings/load_json', $cls->loadPath(...));
   }
 
   public function saveJson(): string
@@ -28,5 +28,3 @@ class Filters
     return $paths;
   }
 }
-
-Filters::attach();

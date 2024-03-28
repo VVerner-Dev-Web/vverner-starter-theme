@@ -4,7 +4,7 @@ namespace VVerner\Core;
 
 class Logger
 {
-  private static $logger = [];
+  private static array $logger = [];
 
   public static function instance(): Logger
   {
@@ -19,7 +19,7 @@ class Logger
   public function dump(mixed $thing): void
   {
     if (isVVernerUser()) :
-      add_action('init', function () use ($thing) {
+      add_action('init', function () use ($thing): never {
         echo '<pre>';
         var_dump($thing);
         echo '<pre>';
@@ -39,9 +39,9 @@ class Logger
 
   private function createLogFile(?string $filename = null): string
   {
-    $filename = $filename ?? current_time('Y-m-d') . '.log';
+    $filename ??= current_time('Y-m-d') . '.log';
 
-    if (substr($filename, -4) != '.log') :
+    if (!str_ends_with($filename, '.log')) :
       $filename .= '.log';
     endif;
 

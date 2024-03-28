@@ -4,9 +4,9 @@ namespace VVerner\Core;
 
 class Schema
 {
-  public $table;
-  public $fields = [];
-  private $sqlFields;
+  public string $table;
+  public array $fields = [];
+  private string $sqlFields;
 
   public function __construct(string $table)
   {
@@ -19,8 +19,7 @@ class Schema
 
     $this->fieldsToSql();
     $sql = "CREATE TABLE IF NOT EXISTS {$this->table} ({$this->sqlFields})";
-    $result = $wpdb->query($sql);
-    return $result;
+    return $wpdb->query($sql);
   }
 
   private function fieldsToSql(): void
@@ -62,7 +61,9 @@ class Schema
   {
     foreach ($this->fields as $key => $field) :
 
-      if (!array_key_exists('foreign', $field)) continue;
+      if (!array_key_exists('foreign', $field)) {
+        continue;
+      }
 
       $this->sqlFields .= ", CONSTRAINT FK_{$this->table}_" . $field['foreign']['table'] . " FOREIGN KEY ({$key}) ";
       $this->sqlFields .= " REFERENCES " . $field['foreign']['table'] . '(' . $field['foreign']['column'] . ')';

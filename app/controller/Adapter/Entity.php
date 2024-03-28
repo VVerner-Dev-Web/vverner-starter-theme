@@ -12,15 +12,16 @@ abstract class Entity
 
   public function __construct(int $id = null)
   {
-    if ($id) :
-      $this->load($id);
-    endif;
+    if ($id === null || $id === 0) {
+      return;
+    }
+    $this->load($id);
   }
 
   /**
    * Must be overridden by subclasses
    */
-  public static function loadFromDbObject(Entity $cls, stdClass $db)
+  public static function loadFromDbObject(Entity $cls, stdClass $db): Entity
   {
     return $cls;
   }
@@ -51,7 +52,7 @@ abstract class Entity
       $this->id = (int) $wpdb->insert_id;
     endif;
 
-    return $created ? true : false;
+    return (bool) $created;
   }
 
   protected function update(): bool
@@ -66,7 +67,7 @@ abstract class Entity
       ['%d']
     );
 
-    return $updated ? true : false;
+    return (bool) $updated;
   }
 
   /**
@@ -74,7 +75,7 @@ abstract class Entity
    */
   protected function db(string $returnType = 'value'): array
   {
-    return array_map(fn ($item) => $item[$returnType], [
+    return array_map(fn ($item): mixed => $item[$returnType], [
       'origin'       => [
         'value'   => $this->id,
         'format'  => '%d'
@@ -90,7 +91,7 @@ abstract class Entity
     $data = $wpdb->get_row($sql);
 
     if ($data) :
-      $this->loadFromDbObject($this, $data);
+      static::loadFromDbObject($this, $data);
     endif;
   }
 }
